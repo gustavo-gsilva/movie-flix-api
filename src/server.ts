@@ -1,5 +1,8 @@
 import express from "express";
 import { prisma } from "../lib/prisma.js";
+import swaggerUi from "swagger-ui-express";
+
+import swaggerDocument from "../swagger.json" with { type: "json" };
 
 const port = 3000;
 const app = express();
@@ -133,7 +136,9 @@ app.get("/movies/:genreName", async (req, res) => {
       });
 
       if (!moviesFilteredByGenreName.length) {
-         return res.status(404).send({ message: "Não foi encontrado um filme com esse gênero" });
+         return res
+            .status(404)
+            .send({ message: "Não foi encontrado um filme com esse gênero" });
       }
 
       res.status(200).send(moviesFilteredByGenreName);
@@ -143,6 +148,8 @@ app.get("/movies/:genreName", async (req, res) => {
          .send({ message: "Falha ao filtar o filme pelo gênero" });
    }
 });
+
+app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.listen(port, () => {
    console.log(`Servidor em execução na porta ${port}`);
